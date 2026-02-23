@@ -2,29 +2,28 @@
 
 ## 📝 Description
 
-This vulnerability stems from a combination of **Information Disclosure** in source code comments and **Broken Access Control** . The server attempts to restrict access to a specific page by verifying the `Referer` and `User-Agent` headers. However, because these headers are client-side and fully controllable by the user, they can be forged to bypass security checks.
+This vulnerability involves **Broken Access Control** where the server relies on the `Referer` HTTP header to verify the origin of a request. Since this header is controlled by the client, it can be easily forged to bypass security restrictions.
 
 ## 🕵️‍♂️ Exploitation Process
 
 ### 1. Information Gathering
 
-While auditing the website with the browser console open, I discovered hidden developer comments in the source code of the copyright page. These comments provided the exact requirements for a "next step":
+While auditing the website source code, I discovered a hidden developer comment on the copyright page indicating a specific origin requirement for the next step:
 
 - **Origin Requirement** : "You must be coming from: `https://www.nsa.gov/`".
-- **Browser Requirement** : "Let's use this browser: `ft_bornToSec`".
 
 ### 2. Forgery via Header-Modifying Extension
 
-On **macOS** , instead of using complex interception tools, I used a browser extension (such as **ModHeader** ) to simplify the forgery process. This allowed me to modify the headers in real-time within my **Brave/Chrome** browser:
+Using a browser extension (such as **ModHeader** ) on **macOS** , I manually injected the required header into the request:
 
 - **Configuration** :
-- **Header Name** : `Referer` | **Value** : `https://www.nsa.gov/`
-- **Header Name** : `User-Agent` | **Value** : `ft_bornToSec`
-- **Target** : I navigated to the target hashed page (`/?page=e43ad1fd...`).
+- **Header Name** : `Referer`
+- **Value** : `https://www.nsa.gov/`
+- **Target** : I navigated to the hidden hashed page (`/?page=e43ad1fd...`).
 
 ### 3. Result
 
-By refreshing the page with the extension active, the browser sent the forged headers. The server validated these headers as legitimate and returned the hidden flag.
+Upon refreshing the page with the spoofed `Referer`, the server validated the request and displayed the flag.
 
 **Flag:** `F2a29020EF3132E01DD61DF97FD33EC8D7FCD1388CC9601E7DB691D17D4D6188`
 
@@ -32,9 +31,8 @@ By refreshing the page with the extension active, the browser sent the forged he
 
 ## 🛠️ How to Fix
 
-To secure the application against header-based bypasses, the following mitigations should be implemented:
+- **Do Not Trust Headers** : Never use HTTP headers like `Referer` for security or access control, as they are trivial for users to modify.
+- **Remove Sensitive Comments** : Ensure production code is sanitized of developer notes that reveal internal logic or requirements.
+- **Secure Authorization** : Use server-side session management and secure tokens to verify user permissions.
 
-- **Sanitize Source Code** : Remove all sensitive developer comments, internal requirements, or "to-do" lists from production code.
-- **Avoid Header-Based Security** : Never use `Referer` or `User-Agent` for security or access control decisions, as they are trivial to spoof.
-- **Implement Strong Authentication** : Use cryptographically secure session tokens or multi-factor authentication (MFA).
-- **Whitelist User Agents** : If specific browsers must be tracked, use a robust server-side whitelist.
+---
