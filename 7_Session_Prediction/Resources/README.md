@@ -32,3 +32,5 @@ This vulnerability occurs when an application uses predictable session identifie
 
 Since you used the Console earlier for the file upload, you can actually set this cookie directly in Brave's console for testing next time by typing:
 `document.cookie = "I_am_admin=b326b5062b2f0e69046810717534cb09; path=/"`
+
+[Click for more information (OWASP)](https://owasp.org/www-community/attacks/Session_Prediction)
