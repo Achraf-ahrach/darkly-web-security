@@ -13,7 +13,7 @@ This vulnerability was discovered in the "Forgot Password" mechanism. The applic
    - However, hidden inputs are visible in any browser's developer tools and can be manipulated to redirect sensitive actions (like password resets) to an attacker's email.
 3. **Execution**
    - Used the Brave **Inspect Element** tool to modify the `value` attribute.
-   - Changed the value from `webmaster@borntosec.com` to a different email address 'achrafahrach44@gmail.com'.
+   - Changed the value from `webmaster@borntosec.com` to a different email address for example `achrafahrach44@gmail.com`.
    - Clicked the **Submit** button to send the tampered data.
 4. **Result**
    - The server accepted the modified email address and displayed the flag.
